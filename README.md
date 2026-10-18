@@ -266,7 +266,7 @@ Delete `youtube_token.pickle` and upload again to redo sign-in. Make sure your G
 
 ## 🎬 Made with YAAS
 
-**[Eldritch Lore](https://www.youtube.com/@EldritchLore)** runs on this pipeline: science, history and "what if" videos. Also see **[The Fractured Timelines](https://www.youtube.com/@TheFracturedTimelines)**.
+**[Eldritch Lore](https://www.youtube.com/@EldritchLore)** runs on this pipeline: science, history and "what if" videos.
 
 ## 🤝 Contributing
 
