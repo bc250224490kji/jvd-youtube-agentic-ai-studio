@@ -93,7 +93,7 @@ topic ──► Research ──► Fact-check ──► Script ──► Visuals
 | 📅 **Schedule uploads** | Upload now or pick a time. Downloads for MP4, thumbnail and captions (SRT). |
 | 📊 **Your stats** | Production history, plus live subscribers and views per upload with a free YouTube Data API key. |
 | 🗂️ **My videos** | Every render archived with its script, sources, photos and metadata. |
-| ©️ **Credits** | Every video carries a semi-transparent **raunakpatil.com** watermark, and descriptions end with *Made with YAAS by Raunak Patil · raunakpatil.com*. |
+| ©️ **Credits** | Descriptions end with *Made with YAAS by Raunak Patil · raunakpatil.com*. |
 | 🎵 **Background music** | Drop MP3s in `music library/` and they're shuffled and looped to fit. |
 
 ---
@@ -167,7 +167,7 @@ Non-secret settings (voice, channel description, video style) are saved to `conf
 ├── video/
 │   ├── narrator.py         ← Edge TTS voiceover + captions
 │   ├── stock.py            ← image download chain + credits
-│   ├── creator.py          ← renderer (Ken Burns, captions, Shorts, watermark)
+│   ├── creator.py          ← renderer (Ken Burns, captions, Shorts)
 │   ├── thumbnail.py        ← thumbnail designer (4 styles, 16:9 + 9:16)
 │   ├── fonts.py            ← Google Fonts download + fallbacks
 │   └── music.py            ← background music mixer
@@ -189,7 +189,7 @@ pip install pytest
 pytest
 ```
 
-The suite runs offline with no API keys. It covers JSON repair, the findability score, every thumbnail style in both shapes, descriptions and credits, the watermark, `.env` handling and the AI model chain. GitHub Actions runs it on every push and pull request.
+The suite runs offline with no API keys. It covers JSON repair, the findability score, every thumbnail style in both shapes, descriptions and credits, `.env` handling and the AI model chain. GitHub Actions runs it on every push and pull request.
 
 ---
 
@@ -226,9 +226,9 @@ Yes. Download the MP4, thumbnail and captions from **Review & publish** and uplo
 </details>
 
 <details>
-<summary><b>Can I turn off the raunakpatil.com watermark?</b></summary>
+<summary><b>Can I turn off credits?</b></summary>
 
-No. The small semi-transparent watermark is part of every video YAAS renders, as credit for the free tool. The description credit line can be switched off in **Settings → Music & publishing**.
+Yes. The description credit line can be switched off in **Settings → Music & publishing**.
 </details>
 
 <details>

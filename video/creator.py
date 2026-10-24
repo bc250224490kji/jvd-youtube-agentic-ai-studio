@@ -10,7 +10,7 @@ Runs fully offline: MoviePy 1.0.3 + Pillow + NumPy.
 """
 import os, re, math
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
 from moviepy.editor import VideoClip, AudioFileClip, concatenate_videoclips
 
 import config
@@ -754,55 +754,9 @@ def _build_shorts_clip(all_images: list, total_duration: float,
 #  MAIN ENTRY POINT
 # ══════════════════════════════════════════════════════════════
 
-# ══════════════════════════════════════════════════════════════
-#  WATERMARK — burned into every frame of every video.
-#  Deliberately not a setting: YAAS credits its author on all output.
-# ══════════════════════════════════════════════════════════════
-
-WATERMARK_TEXT    = "raunakpatil.com"
-WATERMARK_OPACITY = 0.55
-
-
-def _watermark_patch(w: int, h: int):
-    """Pre-rendered watermark: (x, y, rgb float array, alpha float array)."""
-    from video import fonts
-    portrait = h > w
-    size = max(18, int((h * 0.017) if portrait else (h * 0.024)))
-    font = fonts.get("inter", size, 600)
-    pad = size // 2
-    tw = int(font.getlength(WATERMARK_TEXT))
-    pw, ph = tw + pad * 2, int(size * 1.5) + pad
-    patch = Image.new("RGBA", (pw, ph), (0, 0, 0, 0))
-    d = ImageDraw.Draw(patch)
-    # soft dark halo keeps it legible on bright footage
-    halo = Image.new("L", (pw, ph), 0)
-    ImageDraw.Draw(halo).text((pad, pad // 2), WATERMARK_TEXT, font=font, fill=255,
-                              stroke_width=max(2, size // 8), stroke_fill=255)
-    halo = halo.filter(ImageFilter.GaussianBlur(max(2, size // 6)))
-    patch.paste((0, 0, 0, 255), (0, 0), halo.point(lambda v: int(v * .55)))
-    d.text((pad, pad // 2), WATERMARK_TEXT, font=font, fill=(255, 255, 255, 255))
-
-    arr = np.asarray(patch, dtype=np.float32) / 255.0
-    rgb, alpha = arr[..., :3] * 255.0, arr[..., 3:4] * WATERMARK_OPACITY
-    if portrait:      # top centre, under the channel tag — clear of the Shorts UI
-        x, y = (w - pw) // 2, int(h * 0.055)
-    else:             # top right corner
-        x, y = w - pw - int(w * 0.022), int(h * 0.035)
-    return x, y, rgb, alpha
-
-
 def _apply_watermark(clip, w: int, h: int):
-    x, y, rgb, alpha = _watermark_patch(w, h)
-    ph, pw = alpha.shape[:2]
-
-    def stamp(frame):
-        out = frame.copy()
-        region = out[y:y + ph, x:x + pw].astype(np.float32)
-        out[y:y + ph, x:x + pw] = (region * (1 - alpha) + rgb * alpha).astype(np.uint8)
-        return out
-
-    print(f"   → Watermark: {WATERMARK_TEXT}")
-    return clip.fl_image(stamp)
+    # Watermark removed; keep hook as no-op to avoid interrupting render flow.
+    return clip
 
 
 def create_video(script: dict, audio_path: str, output_dir: str,
@@ -934,7 +888,7 @@ def create_video(script: dict, audio_path: str, output_dir: str,
 
         output_path = os.path.join(output_dir, "final_video.mp4")
 
-    # ── WATERMARK (always on) ──────────────────────────────────
+    # ── WATERMARK HOOK (disabled) ──────────────────────────────
     final = _apply_watermark(final, W, H)
 
     # ── EXPORT ─────────────────────────────────────────────────

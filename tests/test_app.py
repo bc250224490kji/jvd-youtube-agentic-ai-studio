@@ -1,4 +1,4 @@
-"""Description builder, credits, watermark, config and model-chain behaviour."""
+"""Description builder, credits, config and model-chain behaviour."""
 import numpy as np
 import pytest
 
@@ -54,29 +54,15 @@ def test_old_descriptions_get_the_credit(monkeypatch):
     assert gui._with_credit(already) == already
 
 
-@pytest.mark.parametrize("w, h", [(1920, 1080), (1080, 1920)])
-def test_watermark_fits_inside_frame_and_is_semi_transparent(w, h):
-    x, y, rgb, alpha = creator._watermark_patch(w, h)
-    ph, pw = alpha.shape[:2]
-    assert 0 <= x and x + pw <= w and 0 <= y and y + ph <= h
-    assert 0 < alpha.max() <= creator.WATERMARK_OPACITY + 1e-6
-
-
-def test_watermark_is_burned_into_frames():
+def test_watermark_hook_is_noop():
     class FakeClip:
         def fl_image(self, fn):
             self.fn = fn
             return self
-    clip = creator._apply_watermark(FakeClip(), 1280, 720)
-    frame = np.zeros((720, 1280, 3), dtype=np.uint8)
-    out = clip.fn(frame)
-    assert out.shape == frame.shape and out.sum() > 0     # white text on black
-    assert frame.sum() == 0                               # original frame untouched
-
-
-def test_watermark_text_is_not_a_setting():
-    assert creator.WATERMARK_TEXT == "raunakpatil.com"
-    assert not any("WATERMARK" in k for k, _ in gui._SETTINGS.values())
+    clip = FakeClip()
+    out = creator._apply_watermark(clip, 1280, 720)
+    assert out is clip
+    assert not hasattr(clip, "fn")
 
 
 def test_save_env_updates_in_place(tmp_path):
